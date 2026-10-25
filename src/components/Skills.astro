@@ -1,0 +1,118 @@
+---
+import { skills } from '../data/profile';
+import { icons } from '../data/icons';
+
+// One compact row per group: the group name, then the tools as logo pills that wrap as needed.
+// The logos share one brushed-silver gradient, like the display type.
+---
+
+<section id="skills" class="section skills" aria-labelledby="skills-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <div>
+        <p class="kicker"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 3v8H3" fill="none" stroke="currentColor" stroke-width="1.3"></path></svg><span>Stack /</span> <b>Tools</b></p>
+        <h2 id="skills-title">Skills and tools</h2>
+        <p>Languages, frameworks and tools I work with.</p>
+      </div>
+    </div>
+
+    <svg class="skills__defs" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="skills-silver" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" class="skills__stop-from"></stop>
+          <stop offset="1" class="skills__stop-to"></stop>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="skills__groups">
+      {
+        skills.map((group, g) => (
+          <div class="skills__group" data-reveal style={`--d:${g}`}>
+            <h3 class="kicker">
+              <b>{group.group}</b>
+            </h3>
+            <ul class="tools" role="list">
+              {group.items.map((skill) => (
+                <li class="tool">
+                  <svg class="tool__logo" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+                    <path d={icons[skill.icon]} fill="url(#skills-silver)" />
+                  </svg>
+                  {skill.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills__defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+  .skills__stop-from {
+    stop-color: var(--silver-from);
+  }
+  .skills__stop-to {
+    stop-color: var(--silver-to);
+  }
+
+  .skills__group {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    align-items: center;
+    gap: 14px 32px;
+    padding-block: 18px;
+    border-top: 1px solid var(--line); /* taste-skill-ignore: poster hairline between groups */
+  }
+  .skills__group:last-child {
+    border-bottom: 1px solid var(--line); /* taste-skill-ignore: poster hairline */
+  }
+
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 18px 0 13px;
+    border: 1px solid var(--line); /* taste-skill-ignore: pill edge */
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: var(--step-small);
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: background-color var(--t-hover) ease, border-color var(--t-hover) ease;
+  }
+  .tool__logo {
+    flex: none;
+    transition: transform 400ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tool:hover {
+      background: var(--tone);
+      border-color: var(--tone-2);
+    }
+    .tool:hover .tool__logo {
+      transform: scale(1.15);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .skills__group {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block: 20px;
+    }
+  }
+</style>

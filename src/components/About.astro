@@ -1,0 +1,147 @@
+---
+import { profile } from '../data/profile';
+
+// Short facts beside the story. Only things that are true today; no placeholders.
+const facts = [
+  { label: 'Based in', value: profile.location },
+  { label: 'Studying', value: `${profile.course}, ${profile.school}` },
+  { label: 'Year level', value: `${profile.yearLevel} year, since 2023` },
+  { label: 'Focus', value: 'Software, UI/UX design, hardware and networks' },
+  { label: 'Time zone', value: profile.timezone },
+];
+---
+
+<section id="about" class="section about" aria-labelledby="about-title">
+  <div class="container">
+    <div class="section-head">
+      <div data-reveal>
+        <p class="kicker"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 3v8H3" fill="none" stroke="currentColor" stroke-width="1.3"></path></svg><span>Who /</span> <b>I am</b></p>
+        <h2 id="about-title">About me</h2>
+        <p class="accent">The person behind the projects.</p>
+      </div>
+    </div>
+
+    <div class="about__rule" aria-hidden="true"><span></span></div>
+
+    <div class="about__grid">
+      <dl class="about__facts">
+        {
+          facts.map((fact, i) => (
+            <div class="about__fact" data-reveal style={`--d:${i}`}>
+              <dt class="kicker">{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <div class="about__story">
+        <blockquote class="about__lead" data-reveal>
+          <svg class="about__star" width="28" height="28" viewBox="-8 -8 16 16" aria-hidden="true">
+            <path d="M0-8C.8-1.2 1.2-.8 8 0 1.2.8.8 1.2 0 8-.8 1.2-1.2.8-8 0-1.2-.8-.8-1.2 0-8Z" fill="currentColor" />
+          </svg>
+          <p class="accent silver">{profile.aboutLead}</p>
+        </blockquote>
+        <div class="about__body">
+          {
+            profile.about.map((paragraph, i) => (
+              <p data-reveal style={`--d:${i + 1}`}>
+                {paragraph}
+              </p>
+            ))
+          }
+        </div>
+        <div class="about__actions" data-reveal style="--d:3">
+          <a class="button button--sm" href="#contact" title="Go to the contact form">Get in touch</a>
+          <a class="button button--quiet button--sm" href={profile.resume} download title="Download my résumé as a PDF">Download résumé</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The poster's hairline with a dot, opening the section. */
+  .about__rule {
+    position: relative;
+    height: 1px;
+    margin-bottom: clamp(40px, 5vw, 64px);
+    background: linear-gradient(90deg, var(--art), color-mix(in srgb, var(--art) 25%, transparent));
+  }
+  .about__rule span {
+    position: absolute;
+    left: 0;
+    top: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  .about__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 48px clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .about__facts {
+    display: grid;
+  }
+  .about__fact {
+    display: grid;
+    gap: 6px;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--line); /* taste-skill-ignore: hairline between facts */
+  }
+  .about__fact:first-child {
+    padding-top: 0;
+  }
+  .about__fact dd {
+    margin: 0;
+    font-size: var(--step-body);
+    line-height: 1.45;
+  }
+
+  .about__lead {
+    position: relative;
+    margin: 0 0 clamp(28px, 3vw, 40px);
+  }
+  .about__lead p {
+    max-width: 18em;
+    padding-right: 0.12em; /* room for the italic overhang inside the silver clip */
+    font-size: var(--step-h2);
+    line-height: 1.05;
+    text-align: left;
+    -webkit-hyphens: none;
+    hyphens: none;
+  }
+  .about__star {
+    margin-bottom: 18px;
+    color: var(--soft);
+  }
+
+  .about__body {
+    display: grid;
+    gap: 1.2em;
+    max-width: 42em;
+    font-size: var(--step-lead);
+    line-height: 1.6;
+  }
+  .about__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  @media (max-width: 860px) {
+    .about__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    /* On one column the story comes first, the facts after it. */
+    .about__facts {
+      order: 1;
+    }
+  }
+</style>

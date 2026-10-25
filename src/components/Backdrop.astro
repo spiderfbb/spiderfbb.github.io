@@ -1,0 +1,84 @@
+---
+// The page's background, after the reference poster: a soft vignette, thin sweeping curves,
+// a few sparkles and film grain. Fixed behind the content and static, so scrolling stays smooth.
+const sparkles = [
+  { x: 6, y: 78, s: 1, d: 0 },
+  { x: 93, y: 22, s: 0.8, d: 1.4 },
+  { x: 71, y: 88, s: 0.7, d: 2.6 },
+  { x: 28, y: 14, s: 0.6, d: 3.8 },
+];
+---
+
+<div class="backdrop" aria-hidden="true">
+  <svg class="backdrop__curves" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <g fill="none" stroke="var(--art)" stroke-width="1" vector-effect="non-scaling-stroke">
+      <path d="M1180 -40 C 1010 160, 640 300, 380 520 S -40 900, -120 980" />
+      <path d="M-80 250 C 260 220, 640 330, 900 520 S 1320 860, 1560 900" />
+      <ellipse cx="900" cy="560" rx="760" ry="250" transform="rotate(-14 900 560)" opacity="0.55" />
+    </g>
+  </svg>
+
+  {
+    sparkles.map((p) => (
+      <svg
+        class="backdrop__sparkle"
+        style={`left:${p.x}%;top:${p.y}%;--s:${p.s};--delay:${p.d}s`}
+        width="16"
+        height="16"
+        viewBox="-8 -8 16 16"
+      >
+        <path d="M0-8C.8-1.2 1.2-.8 8 0 1.2.8.8 1.2 0 8-.8 1.2-1.2.8-8 0-1.2-.8-.8-1.2 0-8Z" fill="currentColor" />
+      </svg>
+    ))
+  }
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="grain grain--top" aria-hidden="true"></div>
+
+<style>
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 70% at 50% -10%, var(--glow) 0%, transparent 60%),
+      radial-gradient(140% 120% at 50% 50%, transparent 55%, var(--vignette) 100%);
+    transform: translateZ(0);
+  }
+  .backdrop__curves {
+    position: absolute;
+    inset: -5%;
+    width: 110%;
+    height: 110%;
+  }
+  .backdrop__sparkle {
+    position: absolute;
+    color: var(--ink);
+    opacity: 0.55;
+    transform: scale(var(--s));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .backdrop__sparkle {
+      animation: twinkle 5s ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+  }
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.2;
+      transform: scale(calc(var(--s) * 0.7)) rotate(0deg);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(var(--s)) rotate(45deg);
+    }
+  }
+  @media print {
+    .backdrop {
+      display: none;
+    }
+  }
+</style>

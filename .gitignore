@@ -1,0 +1,19 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs and env
+npm-debug.log*
+.env
+.env.*
+
+# local tool output and Claude Code skills (not part of the site)
+.claude/
+.playwright/
+.playwright-cli/
+.taste-skill/
+.DS_Store
+~$*

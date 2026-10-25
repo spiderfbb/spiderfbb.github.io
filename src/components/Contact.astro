@@ -1,0 +1,91 @@
+---
+import ContactForm from './ContactForm.astro';
+import { profile } from '../data/profile';
+
+const methods = [
+  { label: 'Email', value: profile.email, href: `mailto:${profile.email}`, tip: 'Write me an email' },
+  { label: 'LinkedIn', value: profile.linkedin.replace(/^https?:\/\/(www\.)?/, ''), href: profile.linkedin, tip: 'LinkedIn profile (opens in a new tab)', external: true },
+  { label: 'GitHub', value: profile.github.replace(/^https?:\/\/(www\.)?/, ''), href: profile.github, tip: 'GitHub profile (opens in a new tab)', external: true },
+  { label: 'Location', value: `${profile.location} · ${profile.timezone}` },
+];
+---
+
+<section id="contact" class="section" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="contact card">
+      <div class="contact__info">
+        <div data-reveal><p class="kicker"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 3v8H3" fill="none" stroke="currentColor" stroke-width="1.3"></path></svg><span>Say /</span> <b>Hello</b></p>
+        <h2 id="contact-title">Get in touch</h2></div>
+        <p class="contact__lead accent" data-reveal style="--d:1">
+          Have a question about my work, or something you'd like to build? Send a message and I'll reply by email.
+        </p>
+        <ul class="contact__methods" role="list">
+          {
+            methods.map((m, i) => (
+              <li data-reveal style={`--d:${i + 2}`}>
+                <span class="soft small">{m.label}</span>
+                {m.href ? (
+                  <a class="link" href={m.href} title={m.tip} {...(m.external ? { rel: 'noopener', target: '_blank' } : {})}>
+                    {m.value}
+                  </a>
+                ) : (
+                  <span>{m.value}</span>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="contact__form">
+        <ContactForm />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kicker {
+    margin-bottom: 18px;
+  }
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: clamp(40px, 6vw, 88px);
+    padding: clamp(28px, 5vw, 64px);
+  }
+  .contact__info h2 {
+    font-size: var(--step-h2);
+  }
+  .contact__lead {
+    max-width: 26em;
+    margin-top: 16px;
+    color: var(--soft);
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+    line-height: 1.4;
+  }
+  .contact__methods {
+    display: grid;
+    gap: 4px;
+    margin-top: 36px;
+  }
+  .contact__methods li {
+    display: grid;
+    gap: 2px;
+    padding: 14px 0;
+  }
+  .contact__methods a,
+  .contact__methods span:last-child {
+    font-size: var(--step-body);
+    overflow-wrap: anywhere;
+  }
+  .contact__form {
+    padding: clamp(20px, 3vw, 32px);
+    border-radius: var(--radius-lg);
+    background: var(--tone);
+  }
+  @media (max-width: 860px) {
+    .contact {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

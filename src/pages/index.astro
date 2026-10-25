@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Projects from '../components/Projects.astro';
+import Skills from '../components/Skills.astro';
+import Activities from '../components/Activities.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import { getActivities, getProjects } from '../lib/content';
+
+const projects = await getProjects();
+const activities = await getActivities();
+---
+
+<Base>
+  <Navbar hasActivities={activities.length > 0} />
+  <main id="main">
+    <Hero />
+    <About />
+    <Projects projects={projects} />
+    <Skills />
+    {activities.length > 0 && <Activities activities={activities} />}
+    <Contact />
+  </main>
+  <Footer />
+</Base>

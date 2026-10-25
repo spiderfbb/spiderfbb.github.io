@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { getActivities } from '../lib/content';
+
+const hasActivities = (await getActivities()).length > 0;
+---
+
+<Base title="Page not found">
+  <Navbar hasActivities={hasActivities} />
+  <main id="main" class="section">
+    <div class="container missing">
+      <h1>Nothing here.</h1>
+      <p class="soft">The page you followed doesn't exist, or it moved.</p>
+      <a class="button" href="/" title="Go to the home page">Back to the home page</a>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .missing {
+    display: grid;
+    justify-items: start;
+    gap: 20px;
+    min-height: 50svh;
+    align-content: center;
+  }
+  h1 {
+    font-size: var(--step-display);
+    line-height: 0.98;
+    letter-spacing: 0.005em;
+  }
+  p {
+    font-size: var(--step-lead);
+  }
+</style>

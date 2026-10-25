@@ -1,0 +1,87 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+// Organizations, seminars, certifications and competitions, newest first.
+interface Props {
+  activities: CollectionEntry<'activities'>[];
+}
+
+const { activities } = Astro.props;
+---
+
+<section id="activities" class="section" aria-labelledby="activities-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <div>
+        <p class="kicker"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 3v8H3" fill="none" stroke="currentColor" stroke-width="1.3"></path></svg><span>Outside /</span> <b>Class</b></p>
+        <h2 id="activities-title">Activities and achievements</h2>
+        <p>Organizations, seminars and certifications.</p>
+      </div>
+    </div>
+
+    <ol class="activities card" role="list">
+      {
+        activities.map((activity, i) => {
+          const { year, title, by, type, result, url } = activity.data;
+          return (
+            <li class="activity" data-reveal style={`--d:${i}`}>
+              <span class="activity__year soft num">{year}</span>
+              <div class="activity__main">
+                <h3 class="activity__title">
+                  {url ? (
+                    <a class="link" href={url} rel="noopener" target="_blank" title={`Open ${title} in a new tab`}>
+                      {title}
+                    </a>
+                  ) : (
+                    title
+                  )}
+                </h3>
+                <p class="soft">
+                  {by}
+                  {result && ` · ${result}`}
+                </p>
+              </div>
+              <span class="chip">{type}</span>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .activities {
+    display: grid;
+    padding: 8px clamp(20px, 3vw, 36px);
+  }
+  .activity {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 24px;
+    padding: 22px 0;
+  }
+  .activity + .activity {
+    border-top: 1px solid var(--line); /* taste-skill-ignore: list divider, owner-approved */
+  }
+  .activity__title {
+    font-size: var(--step-body);
+    letter-spacing: -0.01em;
+  }
+  .activity__main p {
+    margin-top: 2px;
+    font-size: var(--step-small);
+  }
+  @media (max-width: 600px) {
+    .activity {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .activity__year {
+      grid-column: 1 / -1;
+    }
+    .activity .chip {
+      align-self: start;
+    }
+  }
+</style>

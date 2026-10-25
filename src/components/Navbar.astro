@@ -1,0 +1,383 @@
+---
+import { profile } from '../data/profile';
+
+interface Props {
+  hasActivities?: boolean;
+}
+
+const { hasActivities = true } = Astro.props;
+
+const links = [
+  { href: '/#about', label: 'About', id: 'about' },
+  { href: '/#projects', label: 'Projects', id: 'projects' },
+  { href: '/#skills', label: 'Skills', id: 'skills' },
+  ...(hasActivities ? [{ href: '/#activities', label: 'Activities', id: 'activities' }] : []),
+  { href: '/#contact', label: 'Contact', id: 'contact' },
+];
+---
+
+<header class="nav no-print" data-nav>
+  <div class="nav__wrap">
+    <div class="nav__bar glass" data-glass>
+      <a class="nav__brand" href="/" title="Back to the top of the home page">
+        <span class="nav__mark" aria-hidden="true"></span>
+        <span class="nav__name">{profile.name}</span>
+      </a>
+
+      <nav class="nav__menu" id="nav-menu" aria-label="Main">
+        <span class="nav__indicator" aria-hidden="true" data-nav-indicator></span>
+        <ul role="list">
+          {
+            links.map((link) => (
+              <li>
+                <a href={link.href} data-nav-link={link.id} title={`Go to ${link.label}`}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="nav__actions">
+        <a class="button button--sm nav__resume" href={profile.resume} download={profile.resumeFile} title="Download my résumé as a PDF">Résumé</a>
+        <button class="nav__burger" type="button" aria-expanded="false" aria-controls="nav-menu" title="Open the menu" data-nav-toggle>
+          <span class="visually-hidden">Menu</span>
+          <span class="nav__burger-lines" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="nav-spacer" aria-hidden="true"></div>
+
+<style>
+  .nav {
+    position: fixed;
+    top: var(--nav-top);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    pointer-events: none;
+  }
+  .nav-spacer {
+    height: calc(var(--nav-top) + var(--nav-h));
+  }
+  .nav__wrap {
+    width: min(var(--container) + 24px, 100% - 2 * var(--m) + 24px);
+    margin-inline: auto;
+  }
+  /* Brand on the left, links in the centre, Résumé on the right. */
+  .nav__bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 20px;
+    height: var(--nav-h);
+    padding: 0 12px;
+    border-radius: 999px;
+    pointer-events: auto;
+    transition: background-color 400ms ease, box-shadow 400ms ease;
+  }
+  .nav[data-scrolled] .nav__bar {
+    --glass-bg: color-mix(in srgb, var(--ground) 62%, transparent);
+  }
+  .nav__brand {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    grid-column: 1;
+    justify-self: start;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  /* Same typeface as the nav links. */
+  .nav__name {
+    font-size: var(--step-body);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .nav__mark {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--ground);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .nav__menu {
+    position: relative;
+    z-index: 1;
+    grid-column: 2;
+  }
+  .nav__menu ul {
+    display: flex;
+    gap: 2px;
+  }
+  .nav__menu a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    color: var(--soft);
+    font-size: var(--step-small);
+    text-decoration: none;
+    transition: background-color var(--t-hover) ease, color var(--t-hover) ease;
+  }
+  .nav__menu a[aria-current='true'] {
+    color: var(--ink);
+  }
+  .nav__menu ul {
+    position: relative;
+    z-index: 1;
+  }
+  /* One highlight that glides to the current section's link (and to the link under the pointer). */
+  .nav__indicator {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: var(--w, 0px);
+    height: 40px;
+    border-radius: 999px;
+    background: var(--tone);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-rim) 35%, transparent);
+    opacity: var(--o, 0);
+    transform: translate(var(--x, 0px), -50%);
+    transition:
+      transform 550ms var(--ease-out),
+      width 550ms var(--ease-out),
+      opacity 300ms ease;
+    pointer-events: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nav__menu a:hover {
+      color: var(--ink);
+    }
+  }
+  .nav__actions {
+    position: relative;
+    z-index: 1;
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav__burger {
+    display: none;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1.5px solid var(--tone-2);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+  .nav__burger-lines,
+  .nav__burger-lines::before,
+  .nav__burger-lines::after {
+    display: block;
+    width: 16px;
+    height: 1.8px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 300ms var(--ease-out), opacity 200ms ease;
+  }
+  .nav__burger-lines {
+    position: relative;
+  }
+  .nav__burger-lines::before,
+  .nav__burger-lines::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+  .nav__burger-lines::before {
+    top: -5px;
+  }
+  .nav__burger-lines::after {
+    top: 5px;
+  }
+  .nav[data-open] .nav__burger-lines {
+    background: transparent;
+  }
+  .nav[data-open] .nav__burger-lines::before {
+    transform: translateY(5px) rotate(45deg);
+  }
+  .nav[data-open] .nav__burger-lines::after {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nav__bar {
+      animation: nav-in 900ms var(--ease-out) both;
+    }
+  }
+  @keyframes nav-in {
+    from {
+      opacity: 0;
+      transform: translateY(-16px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .nav__name {
+      display: none;
+    }
+    .nav__burger {
+      display: inline-grid;
+    }
+    :global(.js) .nav__menu {
+      position: absolute;
+      grid-column: 1 / -1;
+      grid-row: 1;
+      top: calc(100% + 10px);
+      left: 0;
+      right: 0;
+      display: none;
+      padding: 10px;
+      border-radius: var(--radius-lg);
+      background: color-mix(in srgb, var(--ground) 78%, transparent);
+      -webkit-backdrop-filter: blur(20px) saturate(170%);
+      backdrop-filter: blur(20px) saturate(170%);
+      box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--glass-rim) 60%, transparent),
+        0 0 0 1px var(--line),
+        var(--glass-shadow);
+    }
+    :global(.js) .nav[data-open] .nav__menu {
+      display: block;
+    }
+    :global(.js) .nav__menu ul {
+      flex-direction: column;
+    }
+    :global(.js) .nav__menu a {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      font-size: var(--step-body);
+    }
+    /* In the stacked phone menu the current link gets its own fill instead of the sliding pill. */
+    .nav__indicator {
+      display: none;
+    }
+    .nav__menu a[aria-current='true'] {
+      background: var(--tone);
+    }
+    /* Without scripts the links simply wrap inside the bar. */
+    :global(html:not(.js)) .nav__bar {
+      display: flex;
+      flex-wrap: wrap;
+      height: auto;
+      padding-block: 10px;
+      border-radius: var(--radius-lg);
+    }
+    :global(html:not(.js)) .nav__burger {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  if (nav) {
+    const toggle = nav.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+    const setOpen = (open: boolean) => {
+      nav.toggleAttribute('data-open', open);
+      toggle?.setAttribute('aria-expanded', String(open));
+      if (toggle) toggle.title = open ? 'Close the menu' : 'Open the menu';
+    };
+    toggle?.addEventListener('click', () => setOpen(!nav.hasAttribute('data-open')));
+    nav.querySelectorAll('.nav__menu a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+
+    // On the home page the logo and name glide back to the top instead of reloading the page.
+    nav.querySelector('.nav__brand')?.addEventListener('click', (e) => {
+      if (location.pathname !== import.meta.env.BASE_URL) return;
+      e.preventDefault();
+      setOpen(false);
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: still ? 'auto' : 'smooth' });
+      if (location.hash) history.replaceState(null, '', location.pathname);
+    });
+
+    // The glass gets denser once the page scrolls under it.
+    const onScroll = () => nav.toggleAttribute('data-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Light catches the glass where the pointer is.
+    const glass = nav.querySelector<HTMLElement>('[data-glass]');
+    if (glass && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      glass.addEventListener('pointermove', (e) => {
+        const r = glass.getBoundingClientRect();
+        glass.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        glass.style.setProperty('--my', `${e.clientY - r.top}px`);
+        glass.style.setProperty('--glow', '1');
+      });
+      glass.addEventListener('pointerleave', () => glass.style.setProperty('--glow', '0.6'));
+    }
+
+    // Highlight the link of the section currently in view (home page only). One indicator glides
+    // between links: to the current section's link, and to whichever link the pointer is over.
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
+    const indicator = nav.querySelector<HTMLElement>('[data-nav-indicator]');
+    let current: HTMLAnchorElement | undefined;
+
+    const moveTo = (link?: HTMLAnchorElement) => {
+      if (!indicator) return;
+      if (!link) {
+        indicator.style.setProperty('--o', '0');
+        return;
+      }
+      indicator.style.setProperty('--x', `${link.offsetLeft}px`);
+      indicator.style.setProperty('--w', `${link.offsetWidth}px`);
+      indicator.style.setProperty('--o', '1');
+    };
+    const setCurrent = (id?: string) => {
+      current = links.find((link) => link.dataset.navLink === id);
+      links.forEach((link) => link.setAttribute('aria-current', String(link === current)));
+      moveTo(current);
+    };
+
+    links.forEach((link) => {
+      link.addEventListener('pointerenter', () => moveTo(link));
+      link.addEventListener('focus', () => moveTo(link));
+      link.addEventListener('blur', () => moveTo(current));
+    });
+    nav.querySelector('.nav__menu ul')?.addEventListener('pointerleave', () => moveTo(current));
+    window.addEventListener('resize', () => moveTo(current));
+    document.fonts?.ready.then(() => moveTo(current));
+
+    const sections = links
+      .map((link) => document.getElementById(link.dataset.navLink ?? ''))
+      .filter((el): el is HTMLElement => !!el);
+    if (sections.length && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) setCurrent(entry.target.id);
+          }
+        },
+        { rootMargin: '-45% 0px -50% 0px' },
+      );
+      sections.forEach((section) => io.observe(section));
+      // Back at the top (the hero), no section link is current.
+      window.addEventListener('scroll', () => window.scrollY < innerHeight * 0.4 && setCurrent(), { passive: true });
+    }
+  }
+</script>
